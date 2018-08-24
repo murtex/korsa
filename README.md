@@ -16,7 +16,7 @@ In order to use this software the following requirements must be met:
 Data processing is designed as a multi-stage procedure. At any stage processing runs on a dedicated copy of the data. In order to guarantee an accurate processing stages need to be run progressively. If processing of a particular stage is required to be reiterated any subsequent stage must be run again as well.
 
 | Stage | Command   | Actions                                                                                                                                                                                                                                                                  |
-| :---  | :---      | :---                                                                                                                                                                                                                                                                     |
+| ---:  | :---:     | :---                                                                                                                                                                                                                                                                     |
 | 1     | `convert` | **AG501 conversion**. Parsing of session description files and logfiles from [Phil Hoole's presentation software](http://www.phonetik.uni-muenchen.de/~hoole/articmanual/index.html). Conversion of Carstens AG501 device-provided data (sweeps and pre-cut wave files). |
 | 2     | `preproc` | **Signal preprocessing**. Multi-stage decimation of EMA signals to 83.33 hertz. Butterworth lowpass of fourth order with cutoff 25 hertz. Head movement correction and alingment to the midsagittal-occlusal frame of reference.                                         |
 | 3     | `pcamovs` | **Movement segmentation**. Time-varying moving window principal component analysis (MWPCA) and quintic-spline approximation of the first principal component. Segmentation based on zero velocity.                                                                       |
@@ -28,7 +28,7 @@ Data processing is designed as a multi-stage procedure. At any stage processing 
 Three tools for visual inspection of the data are provided.
 
 | Command   | Description                                                                  |
-| :---      | :---                                                                         |
+| ---:      | :---                                                                         |
 | `preview` | Three-dimensional view of the Carstens AG501's raw sweep files.              |
 | `inspect` | Multi-channel view of signals in framework's format (EMA and audio).         |
 | `animate` | Three-dimensional animation of of articulators (interactive and MP4 output). |

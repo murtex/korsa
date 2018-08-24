@@ -28,7 +28,7 @@ Data processing is designed as a multi-stage procedure. At any stage processing 
 Three tools for visual inspection of the data are provided.
 
 | Command   | Description                                                                  |
-| ---:      | :---                                                                         |
+| :---:     | :---                                                                         |
 | `preview` | Three-dimensional view of the Carstens AG501's raw sweep files.              |
 | `inspect` | Multi-channel view of signals in framework's format (EMA and audio).         |
 | `animate` | Three-dimensional animation of of articulators (interactive and MP4 output). |

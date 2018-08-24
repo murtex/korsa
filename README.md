@@ -1,6 +1,6 @@
 # KORSA processing framework
 
-This is a collection of Matlab scripts and packages for processing data of the [KORSA database of repetitive speech articulations](http://www.ling.uni-potsdam.de/%7Ekuberski/projects.html).
+This is a collection of Matlab scripts and packages for processing data of the [KORSA database](http://www.ling.uni-potsdam.de/%7Ekuberski/projects.html) of repetitive speech articulations.
 
 ## Preparation
 

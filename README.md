@@ -16,9 +16,9 @@ In order to use this software the following requirements must be met:
 Data processing is designed as a multi-stage procedure. At any stage processing runs on a dedicated copy of the data. In order to guarantee an accurate processing stages need to be run progressively. If processing of a particular stage is required to be reiterated any subsequent stage must be run again as well.
 
 | Stage | Command   | Actions                                                                                                                                                                                                                                                                                                  |
-| ---:  | :---:     | :---                                                                                                                                                                                                                                                                                                     |
+| :---  | :---      | :---                                                                                                                                                                                                                                                                                                     |
 | 1     | `convert` | **AG501 conversion**. Parsing of session description files and logfiles from [Phil Hoole's presentation software](http://www.phonetik.uni-muenchen.de/~hoole/articmanual/index.html). Conversion of [Carstens AG501](http://www.articulograph.de/) device-provided data (sweeps and pre-cut wave files). |
-| 2     | `preproc` | **Signal preprocessing**. Multi-stage decimation of EMA signals to 83.33 hertz. Butterworth lowpass of fourth order and 25 hertz cutoff. Head movement correction and alignment to the midsagittal-occlusal frame of reference.                                                                          |
+| 2     | `preproc` | **Signal preprocessing**. Multi-stage decimation of EMA signals to 83.33 hertz. Butterworth lowpass of fourth order and 25 hertz cutoff. Head movement correction and alignment to midsagittal-occlusal frame of reference.                                                                          |
 | 3     | `pcamovs` | **Movement segmentation**. Time-varying moving window principal component analysis (MWPCA) and [quintic-spline approximation](http://www.ling.uni-potsdam.de/~kuberski/methods.html) of the first principal component. Segmentation based on zero velocity.                                              |
 | 4     | `manmovs` | **Movement selection**. Manual selection of movements forming or releasing constrictions.                                                                                                                                                                                                                |
 | 5     | `finsigs` | **Data finishing**. Quintic-spline approximation of displacement, velocity and acceleration curves. Q-narrowing of movements using a 20% peak velocity threshold.                                                                                                                                        |
@@ -28,8 +28,15 @@ Data processing is designed as a multi-stage procedure. At any stage processing 
 Three tools for visual inspection of the data are provided.
 
 | Command   | Description                                                                  |
-| :---:     | :---                                                                         |
-| `preview` | Three-dimensional view of the Carstens AG501's raw sweep files.              |
+| :---      | :---                                                                         |
+| `preview` | Three-dimensional view of Carstens AG501's raw sweep files.              |
 | `inspect` | Multi-channel view of framework signals (EMA and audio).                     |
 | `animate` | Three-dimensional animation of of articulators (interactive and MP4 output). |
+
+## Analysis
+
+| Package | Description                                                   |
+| :---    | :---                                                          |
+| `+plot` | Panel plots.                                                  |
+| `+ref`  | Reference implementation of various statistics of kinematics. |
 

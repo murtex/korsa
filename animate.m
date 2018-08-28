@@ -39,7 +39,7 @@ if true
 	ftr = io.genftr( fcp, procdir_, ani_proc_, fcp, plotdir_, sprintf( '%s-ani', ani_proc_ ) );
 	fexp = ~io.expfcomp( fcp, trialdims_ );
 
-	io.mapftr( ftr, fexp, @animate_, @title_none_, ani_mp4_, ani_rate_, pca_cycles_, {senstongue_, sensbplate_} );
+	io.mapftr( ftr, fexp, @animate_, @title_none_, ani_mp4_, ani_wnd_, ani_rate_, pca_cycles_, {senstongue_, sensbplate_} );
 end
 
 	% done

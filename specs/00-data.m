@@ -8,9 +8,9 @@ xisdir_ = '/home/kuberski/projects/xis/';
 
 project_ = 'korsa-prime';
 
-fc_.subjects = {'sv'};
+fc_.subjects = {'dw'};
 fc_.targets = {'ka'};
-fc_.rates = {};
+fc_.rates = {'bpm480', 'bpm570'};
 fc_.trials = {};
 fc_.sensors = {'tb'};
 fc_.axes = {'y'};

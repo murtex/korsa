@@ -51,6 +51,10 @@ function segment( ftr, tags )
 		% pkt = sig.time{pk};
 		% pk(pkt < roi(1) | pkt > roi(2)) = [];
 
+		if numel( zc ) < 2
+			continue;
+		end
+
 		logger.progress();
 		for gi = [1:numel( zc )-1]
 			m0on = zc(gi); % 0-delimiters

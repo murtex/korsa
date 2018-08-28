@@ -79,8 +79,8 @@ function qnarrow( ftr, q, sub )
 		movs(mi).peak = ti(pk);
 
 		movs(mi).q = q; % q-delimiters
-		movs(mi).qonset = ti(find( vel >= q*pvel, 1, 'first' ));
-		movs(mi).qoffset = ti(find( vel >= q*pvel, 1, 'last' ));
+		movs(mi).qonset = ti(find( vel >= q*(pvel-vel(1))+vel(1), 1, 'first' ));
+		movs(mi).qoffset = ti(find( vel >= q*(pvel-vel(end))+vel(end), 1, 'last' ));
 	end
 
 		% write movements
@@ -90,7 +90,6 @@ function qnarrow( ftr, q, sub )
 		dst = fullfile( ftr.dstdir, dstfcol{si}, dstfn );
 		io.writeparts( dst, {'movs'}, movs );
 	end
-
 
 		% done
 	logger.module = '';

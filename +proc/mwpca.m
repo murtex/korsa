@@ -76,7 +76,7 @@ function mwpca( ftr, method, wndcycles )
 	nwnd = wndcycles*rate/cycrate;
 
 	if isinf( nwnd ) % finite size
-		nwnd = 1;
+		nwnd = nt;
 	end
 
 	nwnd = 2*ceil( nwnd/2 )-1; % odd size

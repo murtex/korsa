@@ -1,7 +1,7 @@
-function animate_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
+function animate_( ftr, titlefun, fmp4, fwnd, framerate, wndcycles, polyvals )
 % animate signals
 %
-% ANIMATE_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
+% ANIMATE_( ftr, titlefun, fmp4, fwnd, framerate, wndcycles, polyvals )
 %
 % INPUT
 % ftr : file transfer (struct scalar)
@@ -24,15 +24,19 @@ function animate_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
 		error( 'invalid argument: fmp4' );
 	end
 
-	if nargin < 3 || ~isnumeric( framerate ) || ~isscalar( framerate )
+	if nargin < 4 || ~islogical( fwnd ) || ~isscalar( fwnd )
+		error( 'invalid value: fwnd' );
+	end
+
+	if nargin < 5 || ~isnumeric( framerate ) || ~isscalar( framerate )
 		error( 'invalid value: framerate' );
 	end
 
-	if nargin < 4 || ~isnumeric( wndcycles ) || ~isscalar( wndcycles )
+	if nargin < 6 || ~isnumeric( wndcycles ) || ~isscalar( wndcycles )
 		error( 'invalid argument: wndcycles' );
 	end
 
-	if nargin < 5 || ~iscell( polyvals ) || ~all( cellfun( @( pv ) iscellstr( pv ), polyvals ) )
+	if nargin < 7 || ~iscell( polyvals ) || ~all( cellfun( @( pv ) iscellstr( pv ), polyvals ) )
 		error( 'invalid argument: polyvals' );
 	end
 
@@ -118,7 +122,7 @@ function animate_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
 	cycrate = sscanf( cycrate{1}, 'bpm%d', 1 )/60;
 	nwnd = wndcycles*framerate/cycrate;
 
-	if isinf( nwnd ) % finite size
+	if nwnd == 0 || isinf( nwnd ) % finite size
 		nwnd = 1;
 	end
 
@@ -168,7 +172,7 @@ function animate_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
 			if t1 > movs{si}(mi).qoffset
 				t1 = t1-1;
 			end
-			shade = linspace( style.shadehi, style.shademed, t1-t0+1 );
+			shade = linspace( style.shademed, style.shadelo, t1-t0+1 );
 			cp([t0:t1], :) = style.color( ~movs{si}(mi).fpos/2, shade );
 		end
 
@@ -176,8 +180,10 @@ function animate_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
 
 		fig.axes( hbx ); % windows
 
-		cp = style.color( NaN, repmat( style.shadelo, [1, numel( xp )] ) ); % traces
-		hbp(si) = patch( 'XData', xp, 'YData', yp, 'ZData', zp, 'CData', cp, 'FaceVertexCData', cp, 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', style.lwthick );
+		if fwnd
+			cp = style.color( NaN, repmat( style.shadelo, [1, numel( xp )] ) ); % traces
+			hbp(si) = patch( 'XData', xp, 'YData', yp, 'ZData', zp, 'CData', cp, 'FaceVertexCData', cp, 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', style.lwthick );
+		end
 
 		cp = style.color( 2/3, style.shadelo ); % markers
 		hbm(si) = patch( 'XData', xp(1), 'YData', yp(1), 'ZData', zp(1), 'FaceColor', 'none', 'EdgeColor', 'none', 'LineWidth', style.lwnorm, 'Marker', 'o', 'MarkerSize', style.mslarge, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', cp );
@@ -203,20 +209,27 @@ function animate_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
 			xp = [reshape( r(si, 1, [1:tj]), [1, tj] ), NaN( [1, nt-tj+1] )];
 			yp = [reshape( r(si, 2, [1:tj]), [1, tj] ), NaN( [1, nt-tj+1] )];
 			zp = [reshape( r(si, 3, [1:tj]), [1, tj] ), NaN( [1, nt-tj+1] )];
+
+			% xp([1:max( 1, tj-nwnd )]) = NaN; % fade out
+			% yp([1:max( 1, tj-nwnd )]) = NaN;
+			% zp([1:max( 1, tj-nwnd )]) = NaN;
+
 			set( hap(si), 'XData', xp, 'YData', yp, 'ZData', zp );
 		end
 
 			% update windows
 		for si = [1:nsens]
-			xp = NaN( [1, nt+1] );
-			yp = NaN( [1, nt+1] );
-			zp = NaN( [1, nt+1] );
+			if fwnd
+				xp = NaN( [1, nt+1] ); % traces
+				yp = NaN( [1, nt+1] );
+				zp = NaN( [1, nt+1] );
 
-			twnd = [max( 1, tj-nwndh ):min( nt, tj+nwndh )]; % traces
-			xp(twnd) = r(si, 1, twnd);
-			yp(twnd) = r(si, 2, twnd);
-			zp(twnd) = r(si, 3, twnd);
-			set( hbp(si), 'XData', xp, 'YData', yp, 'ZData', zp );
+				twnd = [max( 1, tj-nwndh ):min( nt, tj+nwndh )];
+				xp(twnd) = r(si, 1, twnd);
+				yp(twnd) = r(si, 2, twnd);
+				zp(twnd) = r(si, 3, twnd);
+				set( hbp(si), 'XData', xp, 'YData', yp, 'ZData', zp );
+			end
 
 			xp = r(si, 1, tj); % markers
 			yp = r(si, 2, tj);
@@ -232,7 +245,7 @@ function animate_( ftr, titlefun, fmp4, framerate, wndcycles, polyvals )
 			set( hcp(pj), 'XData', xp, 'YData', yp, 'ZData', zp );
 		end
 
-			% update fram
+			% update frame
 		drawnow();
 		if fmp4
 			fig.addframe( true );

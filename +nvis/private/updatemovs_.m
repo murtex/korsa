@@ -53,7 +53,7 @@ function updatemovs_( hfig, imovs )
 		ins = [];
 		exs = [];
 		sels = [];
-		doubs = [];
+		dubs = [];
 		neg = [];
 
 		mis = 1:numel( movs );
@@ -67,7 +67,7 @@ function updatemovs_( hfig, imovs )
 				if fsel
 					sels(end+1) = mi;
 					if abs( diff( sig.data{1, [movs(mi).onset, movs(mi).offset]} ) ) < 1 % dubious
-						doubs(end+1) = mi;
+						dubs(end+1) = mi;
 					end
 					if ~movs(mi).fpos % negative
 						neg(end+1) = mi;
@@ -97,8 +97,8 @@ function updatemovs_( hfig, imovs )
 		colsello = style.color( (si-1)/numel( edata.sigs ), style.shadelo + NVIS_BRIGHTEN ); % selected
 		colselhi = style.color( (si-1)/numel( edata.sigs ), shade_( style.shadehi ) + NVIS_BRIGHTEN );
 
-		coldoublo = style.color( 1/3, style.shadelo + NVIS_BRIGHTEN ); % doubious
-		coldoubhi = style.color( 1/3, shade_( style.shadehi ) + NVIS_BRIGHTEN );
+		coldublo = style.color( 1/3, style.shadelo + NVIS_BRIGHTEN ); % dubious
+		coldubhi = style.color( 1/3, shade_( style.shadehi ) + NVIS_BRIGHTEN );
 
 		colselloneg = style.color( 1/2+(si-1)/numel( edata.sigs ), style.shadelo + NVIS_BRIGHTEN ); % openings
 		colselhineg = style.color( 1/2+(si-1)/numel( edata.sigs ), shade_( style.shadehi ) + NVIS_BRIGHTEN );
@@ -107,9 +107,9 @@ function updatemovs_( hfig, imovs )
 		qfssel = {'EdgeColor', colsello, 'FaceColor', colselhi, 'LineWidth', style.lwthin};
 		lssel = {'Color', colsello, 'LineWidth', style.lwthin, 'LineStyle', '-.'};
 
-		fsdoub = {'EdgeColor', coldoublo, 'FaceColor', 'none', 'LineWidth', style.lwthickest, 'LineStyle', '-.'};
-		qfsdoub = {'EdgeColor', coldoublo, 'FaceColor', coldoubhi, 'LineWidth', style.lwthickest};
-		lsdoub = {'Color', coldoublo, 'LineWidth', style.lwthickest, 'LineStyle', '-.'};
+		fsdub = {'EdgeColor', coldublo, 'FaceColor', 'none', 'LineWidth', style.lwthickest, 'LineStyle', '-.'};
+		qfsdub = {'EdgeColor', coldublo, 'FaceColor', coldubhi, 'LineWidth', style.lwthickest};
+		lsdub = {'Color', coldublo, 'LineWidth', style.lwthickest, 'LineStyle', '-.'};
 
 		fsselneg = {'EdgeColor', colselloneg, 'FaceColor', 'none', 'LineWidth', style.lwthin, 'LineStyle', '-.'};
 		qfsselneg = {'EdgeColor', colselloneg, 'FaceColor', colselhineg, 'LineWidth', style.lwthin};
@@ -128,9 +128,9 @@ function updatemovs_( hfig, imovs )
 			set( edata.link2{si, ci}(sels), vis2{:}, qfssel{:} );
 			set( edata.link3{si, ci}(sels), vis3{:}, lssel{:} );
 
-			set( edata.link1{si, ci}(doubs), vis1{:}, fsdoub{:} ); % dubious
-			set( edata.link2{si, ci}(doubs), vis2{:}, qfsdoub{:} );
-			set( edata.link3{si, ci}(doubs), vis3{:}, lsdoub{:} );
+			set( edata.link1{si, ci}(dubs), vis1{:}, fsdub{:} ); % dubious
+			set( edata.link2{si, ci}(dubs), vis2{:}, qfsdub{:} );
+			set( edata.link3{si, ci}(dubs), vis3{:}, lsdub{:} );
 
 			%set( edata.link1{si, ci}(neg), vis1{:}, fsselneg{:} ); % re-color negative direction
 			%set( edata.link2{si, ci}(neg), vis2{:}, qfsselneg{:} );

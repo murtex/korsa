@@ -9,7 +9,7 @@ function hld = box( fig, hax, data )
 % data : data (struct)
 %
 % OUTPUT
-% hld : handles for the legend (TODO)
+% hld : legend handles (handle)
 
 		% safeguard
 	if nargin < 1 || ~isscalar( fig ) || ~isa( fig, 'hFigure' )
@@ -60,7 +60,7 @@ function hld = box( fig, hax, data )
 		hueneg(ui) = mean( [data.form(~data.fpos & data.vals(1, :) == ux(ui)).hue] );
 	end
 
-		% merge directions
+		% interleave directions
 	x = NaN( [1, 0] );
 	w = NaN( [1, 0] );
 	q = NaN( [0, 5] );
@@ -69,11 +69,12 @@ function hld = box( fig, hax, data )
 	fpos = ~all( isnan( qpos(:) ) );
 	fneg = ~all( isnan( qneg(:) ) );
 
-	W = min( diff( ux ) )/2;
+	Q = 0.618;
+	W = Q*min( diff( ux ) );
 	W2 = W/2;
 
 	if fpos && fneg % bi-directional
-		x = [ux-W2, ux+W2];
+		x = [ux-W2/2, ux+W2/2];
 		w = repmat( W2, size( x ) );
 		q = [qpos; qneg];
 		hue = [huepos, hueneg];
@@ -96,6 +97,9 @@ function hld = box( fig, hax, data )
 		box_( x(xi), w(xi), q(xi, :), hue(xi) );
 	end
 
+		% adjust axis limits
+	set( hax, 'YLim', style.limits( q, 0.1, get( hax, 'YLim' ) ) );
+
 end % function
 
 	% local functions
@@ -114,14 +118,16 @@ function box_( x, w, q, hue )
 
 	xp = [x, x, NaN]; % candle
 	yp = [q(1), q(5), NaN];
-	patch( 'XData', xp, 'YData', yp, 'FaceColor', 'none', 'EdgeColor', style.color( NaN, style.shadelo ), 'LineWidth', style.lwnorm );
+	patch( 'XData', xp, 'YData', yp, 'FaceColor', 'none', 'EdgeColor', style.color( NaN, style.shadelo ), 'LineWidth', style.lwthin );
 
 	xp = [x-w/2, x-w/2, x+w/2, x+w/2]; % box
 	yp = [q(2), q(4), q(4), q(2)];
-	patch( 'XData', xp, 'YData', yp, 'FaceColor', style.color( hue, style.shademed ), 'EdgeColor', style.color( NaN, style.shadelo ), 'LineWidth', style.lwnorm );
+	patch( 'XData', xp, 'YData', yp, 'FaceColor', style.color( hue, style.shademed ), 'EdgeColor', style.color( NaN, style.shadelo ), 'LineWidth', style.lwthin );
 
-	xp = repmat( [x-w/2, x+w/2, NaN], [1, 3] ); % whiskers
+	Q = 0.618; % whiskers
+	xp = repmat( [x-w/2, x+w/2, NaN], [1, 3] );
+	xp = [x-Q*w/2, x+Q*w/2, NaN, x-w/2, x+w/2, NaN, x-Q*w/2, x+Q*w/2, NaN];
 	yp = [q([1, 1]), NaN, q([3, 3]), NaN, q([5, 5]), NaN];
-	patch( 'XData', xp, 'YData', yp, 'FaceColor', 'none', 'EdgeColor', style.color( NaN, style.shadelo ), 'LineWidth', style.lwnorm );
+	patch( 'XData', xp, 'YData', yp, 'FaceColor', 'none', 'EdgeColor', style.color( NaN, style.shadelo ), 'LineWidth', style.lwthin );
 end % function
 

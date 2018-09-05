@@ -40,7 +40,7 @@ function mwpca( ftr, method, wndcycles )
 	dstfcol = dstfcol(srcval);
 	io.valoutfcol( dstfcol, ftr.dstdir );
 
-	logger.tab( 'moving window pca...' );
+	logger.tab( 'principal component analysis (moving window)...' );
 	logger.module = util.module();
 
 		% read signals
@@ -92,7 +92,7 @@ function mwpca( ftr, method, wndcycles )
 	val = NaN( [nax, nt] );
 
 	for ti = [nwndh+1:nt-nwndh]
-		[r0(:, ti), vec(:, :, ti), val(:, ti)] = pca_( method, r(:, [ti-nwndh:ti+nwndh]) ); % pca
+		[r0(:, ti), vec(:, :, ti), val(:, ti)] = util.pca( method, r(:, [ti-nwndh:ti+nwndh]) ); % pca
 
 		if det( vec(:, :, ti) ) < 0 % ensure proper rotation
 			vec(:, nax, ti) = -vec(:, nax, ti);
@@ -127,72 +127,6 @@ function mwpca( ftr, method, wndcycles )
 		% done
 	logger.module = '';
 	logger.untab();
-
-end % function
-
-	% local functions
-function [r0, vec, val] = pca_( method, r )
-
-		% safeguard
-	if nargin < 1 || ~ischar( method )
-		error( 'invalid argument: method' );
-	end
-
-	if nargin < 2 || ~isnumeric( r ) || ~ismatrix( r )
-		error( 'invalid argument: r' );
-	end
-
-		% compute output
-	[nx, nt] = size( r );
-
-	if nx ~= 3
-		error( 'invalid value: nx' );
-	end
-
-	switch method
-		case 'inertia'
-			m = ones( [1, nt] ); % barycentric system
-			r0 = sum( repmat( m, [nx, 1] ).*r, 2 )/sum( m );
-			rp = r-r0;
-
-			xx = sum( m.*(rp(2, :).^2+rp(3, :).^2) ); % intertia tensor
-			yy = sum( m.*(rp(1, :).^2+rp(3, :).^2) );
-			zz = sum( m.*(rp(1, :).^2+rp(2, :).^2) );
-			xy = -sum( m.*rp(1, :).*rp(2, :) );
-			xz = -sum( m.*rp(1, :).*rp(3, :) );
-			yz = -sum( m.*rp(2, :).*rp(3, :) );
-
-			theta = [xx, xy, xz; xy, yy, yz; xz, yz, zz];
-
-			[vec, val] = eig( theta ); % eigenvectors
-			val = 1./diag( val ); % and (inverse) eigenvalues
-
-		case 'cov'
-			r0 = mean( r, 2 ); % centering
-			rp = r-r0;
-
-			cov = rp*transpose( rp )/nt; % covariances
-
-			[vec, val] = eig( cov ); % eigenvectors
-			val = diag( val ); % and eigenvalues
-
-		case 'svd'
-			error( 'invalid value: method' ); % TODO
-
-		otherwise
-			error( 'invalid value: method' );
-	end
-
-	if any( val < 0 ) % TODO: semi-definite matrix!?
-		error( 'invalid value: val' );
-	end
-
-	[val, perm] = sort( val, 'descend' ); % sort by eigenvalues (most principal first)
-	vec = vec(:, perm);
-
-	[~, md] = max( abs( vec ), [], 1 ); % positive major directions
-	s = sign( vec(md + [0:nx:(nx-1)*nx]) );
-	vec = bsxfun( @times, vec, s );
 
 end % function
 

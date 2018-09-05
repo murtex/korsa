@@ -36,7 +36,7 @@ function [data, raxd, daxd, props] = joinaxes_( data, raxd, daxd, opts )
 	props = {};
 
 	shape = size( data );
-	[~, ~, ~, joint] = parseopts_( opts );
+	joint = parseopts2_( opts, 'joint' );
 
 	if ismember( 'x', joint{1} ) % horizontal
 		daxd = [raxd(1), daxd];

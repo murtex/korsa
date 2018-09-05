@@ -1,7 +1,7 @@
-function pvel = movs_pvel( sigs, movs, fq, sub )
-% movemnt peak velocities
+function pvel = kin_pvel( sigs, movs, fq, sub )
+% kinematics: movemnt peak velocities
 %
-% pvel = MOVS_PVEL( sigs, movs, fq, sub )
+% pvel = KIN_PVEL( sigs, movs, fq, sub )
 %
 % INPUT
 % sigs : signals (object)
@@ -32,7 +32,7 @@ function pvel = movs_pvel( sigs, movs, fq, sub )
 	end
 
 		% compute peak velocity
-	pvel = max( ref.movs_vel( sigs, movs, fq, sub ), [], 1 );
+	pvel = max( ref.kin_vel( sigs, movs, fq, sub ), [], 1 );
 
 end % function
 

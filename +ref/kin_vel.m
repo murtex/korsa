@@ -1,7 +1,7 @@
-function vel = movs_vel( sigs, movs, fq, sub )
-% movement velocities
+function vel = kin_vel( sigs, movs, fq, sub )
+% kinematics: movement velocities
 %
-% vel = MOVS_VEL( sigs, movs, fq, sub )
+% vel = KIN_VEL( sigs, movs, fq, sub )
 %
 % INPUT
 % sigs : signals (object)

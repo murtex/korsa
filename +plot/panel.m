@@ -87,7 +87,7 @@ function panel( ftr, dimfun, opts, figdim, titlefun, movsfun, datafuns, datafuna
 	logger.module = util.chainstr( '@', util.basefun( datafuns{end} ), util.basefun( plotfuns{1} ) );
 
 		% prepare data
-	[fsplit, fjoint, fover, ~, ~, legend, ~, feven] = parseopts_( opts ); % options
+	[fsplit, fjoint, fover, feven] = parseopts2_( opts, 'fsplit', 'fjoint', 'fover', 'feven' );
 
 	[data, raxd] = readraw_( ftr, dimfun, movsfun ); % read raw
 
@@ -109,7 +109,7 @@ function panel( ftr, dimfun, opts, figdim, titlefun, movsfun, datafuns, datafuna
 	end
 
 	for fi = [1:numel( datafuns )] % compute data
-		[data, daxd, labpos, props] = datafuns{fi}( ftr, dimfun, data, formargs, datafunargs{fi}{:} );
+		[data, daxd, props] = datafuns{fi}( ftr, dimfun, data, formargs, datafunargs{fi}{:} );
 	end
 
 	[data, raxd, daxd, jprops] = joinaxes_( data, raxd, daxd, opts ); % inject joint axes
@@ -163,13 +163,13 @@ function panel( ftr, dimfun, opts, figdim, titlefun, movsfun, datafuns, datafuna
 		% prepare figure
 	fig = hFigure();
 
-	hax = setpanel_( fig, opts, false, jdata, dshape, daxd, raxd, labpos, props ); % create axes
+	hax = setpanel_( fig, opts, false, jdata, dshape, daxd, raxd, props ); % create axes
 	if ~isequal( size( hax ), size( jdata ) )
 		error( 'invalid value: hax' );
 	end
 
 	if any( fsplit )
-		hbx = setpanel_( fig, opts, true, jdata, dshape, daxd, raxd, labpos, props );
+		hbx = setpanel_( fig, opts, true, jdata, dshape, daxd, raxd, props );
 		if ~isequal( size( hbx ), size( jdata ) )
 			error( 'invalid value: hbx' );
 		end
@@ -266,11 +266,7 @@ function panel( ftr, dimfun, opts, figdim, titlefun, movsfun, datafuns, datafuna
 			end
 
 				% plot legend
-			if ~isempty( legend )
-				hld = legend_( fig, hax(dx, dy), hld, labpos, legend );
-				legend = {}; % single legend only, TODO: might miss some entries of later subplots
-			end
-
+			hld = legend_( fig, hax(dx, dy), hld, opts );
 			delete( hld ); % delete supposed objects
 
 			logger.progress( di, prod( size( hax ) ) );

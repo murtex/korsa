@@ -1,7 +1,7 @@
-function hax = setpanel_( fig, opts, foffs, data, dshape, daxd, raxd, labpos, props )
+function hax = setpanel_( fig, opts, foffs, data, dshape, daxd, raxd, props )
 % create panel axes
 %
-% hax = SETPANEL_( fig, opts, foffs, data, dshape, daxd, raxd, labpos, props )
+% hax = SETPANEL_( fig, opts, foffs, data, dshape, daxd, raxd, props )
 %
 % INPUT
 % fig : figure reference (scalar object)
@@ -11,7 +11,6 @@ function hax = setpanel_( fig, opts, foffs, data, dshape, daxd, raxd, labpos, pr
 % dshape : original data shape (numeric)
 % daxd : derived axes description (struct)
 % raxd : raw axes description (struct)
-% labpos : panel label position (char)
 % props : axes properties (cell)
 %
 % OUTPUT
@@ -46,11 +45,7 @@ function hax = setpanel_( fig, opts, foffs, data, dshape, daxd, raxd, labpos, pr
 		error( 'invalid argument: raxd' );
 	end
 
-	if nargin < 8 || ~ischar( labpos )
-		error( 'invalid argument: labpos' );
-	end
-
-	if nargin < 9 || ~iscell( props )
+	if nargin < 8 || ~iscell( props )
 		error( 'invalid argument: props' );
 	end
 
@@ -58,11 +53,12 @@ function hax = setpanel_( fig, opts, foffs, data, dshape, daxd, raxd, labpos, pr
 	style = hStyle.instance();
 
 		% create panel axes
-	[fsplit, fjoint, fover, joint, scale, ~, split] = parseopts_( opts );
+	[fsplit, fjoint, fover, joint, scale, split, labpos] = parseopts2_( opts, 'fsplit', 'fjoint', 'fover', 'joint', 'scale', 'split', 'labpos' );
+
 	shape = size( data );
 	sshape = (fsplit+1).*shape;
 
-	logger.progress( 'prepare panel axes...' );
+	logger.progress( 'create panel axes...' );
 
 	for dx = 1:shape(1)
 		for dy = 1:shape(2)

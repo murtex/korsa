@@ -51,13 +51,13 @@ function [data, axd] = readraw_( ftr, dimfun, movsfun )
 	end
 
 		% filter movements
-	for di = 1:numel( data )
+	for di = [1:numel( data )]
 		if isempty( data{di} )
 			continue;
 		end
 
-		for si = 1:numel( data{di}.sigs )
-			data{di}.movs{si}(~movsfun( data{di}.movs{si} )) = [];
+		for si = [1:numel( data{di}.sigs )]
+			data{di}.movs{si} = movsfun( data{di}.sigs(si), data{di}.movs{si} );
 		end
 	end
 
@@ -122,7 +122,7 @@ function data = readsigs_( ftr )
 	data.fc = ftr.srcfc;
 	data.fcol = fcol;
 
-	for fi = 1:numel( fcol )
+	for fi = [1:numel( fcol )]
 		infile = fullfile( ftr.srcdir, fcol{fi}, strcat( ftr.srcbase, '.mat' ) ); % read data
 		[data.sigs(fi), data.info(fi), data.movs{fi}, data.roi(fi, [1, 2])] = nprivy.readsig( infile, {'sig', 'info', 'movs', 'roi'} );
 	end

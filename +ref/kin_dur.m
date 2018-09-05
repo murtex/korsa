@@ -1,7 +1,7 @@
-function dur = movs_dur( sig, movs, fq )
-% movment durations
+function dur = kin_dur( sig, movs, fq )
+% kinematics: movment durations
 %
-% dur = MOVS_DUR( sig, movs, fq )
+% dur = KIN_DUR( sig, movs, fq )
 %
 % INPUT
 % sig : signal (scalar object)

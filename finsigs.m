@@ -37,20 +37,20 @@ fc = io.fixfcomp( fc, fcfull );
 	% duplicate signals
 if true
 
-		% pre signals, TODO: do not overwrite!
+		% pre signals, TODO: do not overwrite on existence!
 	fcp = fc;
 	ftr = io.genftr( fcp, procdir_, 'pre', fcp, procdir_, 'occ' );
 	fexp = ~io.expfcomp( fcp, trialdims_ );
 
 	io.mapftr( ftr, fexp, @proc.copy, {'sig', 'info'} );
 
-		% pca movements
+		% seg movements
 	fcp = io.filtfcomp( fc, trialdims_, {fc_.sensors, axpca_}, true );
 
 	for ai = [1:numel( axema_ )]
 		fcpp = io.filtfcomp( fc, trialdims_, {fc_.sensors, axema_(ai)}, true );
 
-		ftr = io.genftr( fcp, procdir_, 'pca', fcpp, procdir_, 'occ' );
+		ftr = io.genftr( fcp, procdir_, 'seg', fcpp, procdir_, 'occ' );
 		fexp = ~io.expfcomp( fcp, trialdims_ );
 
 		io.mapftr( ftr, fexp, @proc.copy, {'movs'} );
@@ -65,17 +65,7 @@ if true
 	ftr = io.genftr( fcp, procdir_, 'occ' );
 	fexp = ~io.expfcomp( fcp, trialdims_ );
 
-	io.mapftr( ftr, fexp, @proc.spline, pca_spline_ );
-end
-
-	% -----------------------------------------------------------------------
-	% q-narrowing
-if true
-	fcp = io.filtfcomp( fc, trialdims_, {fc_.sensors, axema_}, true );
-	ftr = io.genftr( fcp, procdir_, 'occ' );
-	fexp = ~io.expfcomp( fcp, {'axes'} );
-
-	io.mapftr( ftr, fexp, @proc.qnarrow, movs_q, movs_sub );
+	io.mapftr( ftr, fexp, @proc.spline, seg_spline_ );
 end
 
 	% -----------------------------------------------------------------------

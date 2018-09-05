@@ -17,10 +17,6 @@ addpath( xisdir_ );
 logger = hLogger.instance( fullfile( 'aux/', strcat( util.module(), '.log' ) ) );
 logger.tab( '%s...', util.module() );
 
-style = hStyle.instance();
-style.layout( 'screen', get( 0, 'ScreenPixelsPerInch' ), '755px', '14pt' );
-style.geometry( [1, 1], [1, 1], 1.0, [NaN, NaN, NaN, NaN] );
-
 	% prepare dataset
 logger.fcritical = false;
 fcfull = fc_full_( rawdir_, procdir_, fieldnames( fc_ ), true );

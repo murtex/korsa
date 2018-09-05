@@ -6,12 +6,12 @@
 datadir_ = '/home/kuberski/data/korsa/';
 xisdir_ = '/home/kuberski/projects/xis/';
 
-project_ = 'korsa-prime';
+project_ = 'seg-mwpca';
 
-fc_.subjects = {'dw'};
-fc_.targets = {'ka'};
-fc_.rates = {'bpm480', 'bpm570'};
+fc_.subjects = {'sv'};
+fc_.targets = {'ta'};
+fc_.rates = {};
 fc_.trials = {};
-fc_.sensors = {'tb'};
+fc_.sensors = {'tt'};
 fc_.axes = {'y'};
 

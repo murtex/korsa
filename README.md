@@ -18,10 +18,10 @@ Data processing is designed as a multi-stage procedure. At any stage processing 
 | Stage | Command   | Actions                                                                                                                                                                                                                                                                                                  |
 | :---  | :---      | :---                                                                                                                                                                                                                                                                                                     |
 | 1     | `convert` | **AG501 conversion**. Parsing of session description files and logfiles from [Phil Hoole's presentation software](http://www.phonetik.uni-muenchen.de/~hoole/articmanual/index.html). Conversion of [Carstens AG501](http://www.articulograph.de/) device-provided data (sweeps and pre-cut wave files). |
-| 2     | `preproc` | **Signal preprocessing**. Multi-stage decimation of EMA signals to 83.33 hertz. Butterworth lowpass of fourth order and 25 hertz cutoff. Head movement correction and alignment to midsagittal-occlusal frame of reference.                                                                          |
-| 3     | `pcamovs` | **Movement segmentation**. Time-varying moving window principal component analysis (MWPCA) and [quintic-spline approximation](http://www.ling.uni-potsdam.de/~kuberski/methods.html) of the first principal component. Segmentation based on zero velocity.                                              |
-| 4     | `manmovs` | **Movement selection**. Manual selection of movements forming or releasing constrictions.                                                                                                                                                                                                                |
-| 5     | `finsigs` | **Data finishing**. Quintic-spline approximation of displacement, velocity and acceleration curves. Q-narrowing of movements using a 20% peak velocity threshold.                                                                                                                                        |
+| 2     | `preproc` | **Signal preprocessing**. Multi-stage decimation of EMA signals to 83.33 hertz. Butterworth lowpass of fourth order and 25 hertz cutoff. Head movement correction and alignment to midsagittal-occlusal frame of reference.                                                                              |
+| 3     | `segsigs` | **Signal segmentation**. Time-varying moving window principal component analysis (MWPCA) and [quintic-spline approximation](http://www.ling.uni-potsdam.de/~kuberski/methods.html) of the first principal component. Segmentation based on zero velocity and 20% peak velocity value.                    |
+| 4     | `selmovs` | **Movement selection**. Manual selection of movements forming or releasing constrictions.                                                                                                                                                                                                                |
+| 5     | `finsigs` | **Data finishing**. Quintic-spline approximation of displacement, velocity and acceleration curves. Minimization of region of interest (ROI).                                                                                                                                                            |
 
 ## Inspection
 
@@ -35,8 +35,9 @@ Three tools for visual inspection of the data are provided.
 
 ## Analysis
 
-| Package | Description                                                   |
-| :---    | :---                                                          |
-| `+plot` | Panel plots.                                                  |
-| `+ref`  | Reference implementation of various statistics of kinematics. |
+| Package | Description                                     |
+| :---    | :---                                            |
+| `+plot` | Panel plots.                                    |
+| `+ref`  | Reference implementation of certain statistics. |
+|         |                                                 |
 

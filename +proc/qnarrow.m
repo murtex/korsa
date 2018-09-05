@@ -1,12 +1,11 @@
-function qnarrow( ftr, q, sub )
-% q-narrowing
+function qnarrow( ftr, q )
+% q-narrowing (analytical)
 %
-% QNARROW( ftr, q, sub )
+% QNARROW( ftr, q )
 %
 % INPUT
 % ftr : file transfer (struct scalar)
 % q : q-value (numeric scalar)
-% sub : subsampling (numeric scalar)
 %
 % REMARKS
 % - ftr must be mapped by individual sensors
@@ -20,10 +19,6 @@ function qnarrow( ftr, q, sub )
 
 	if nargin < 2 || ~isnumeric( q ) || ~isscalar( q )
 		error( 'invalid argument: q' );
-	end
-
-	if nargin < 3 || ~isnumeric( sub ) || ~isscalar( sub )
-		error( 'invalid argument: sub' );
 	end
 
 	logger = hLogger.instance();
@@ -40,54 +35,40 @@ function qnarrow( ftr, q, sub )
 	dstfcol = dstfcol(srcval);
 	io.valoutfcol( dstfcol, ftr.dstdir );
 
-	logger.tab( 'q-narrowing...' );
+		% downsample signals
+	logger.tab( 'q-narrowing (analytical)...' );
 	logger.module = util.module();
 
-		% read signals
 	srcfn = strcat( ftr.srcbase, '.mat' );
-
-	for fi = 1:numel( srcfcol )
-		src = fullfile( ftr.srcdir, srcfcol{fi}, srcfn );
-		[sigs(fi), movs{fi}] = io.readparts( src, {'sig', 'movs'} );
-	end
-
-	nax = numel( sigs );
-	nt = unique( arrayfun( @( s ) numel( s.time ), sigs ) );
-	rate = unique( arrayfun( @( s ) s.rate, sigs ) );
-
-	if nax < 3
-		error( 'invalid value: nax' );
-	end
-	if numel( nt ) ~= 1
-		error( 'invalid value: nt' );
-	end
-	if numel( rate ) ~= 1
-		error( 'invalid value: rate' );
-	end
-
-	if numel( unique( cellfun( @numel, movs ) ) ) ~= 1
-		error( 'invalid value: movs' );
-	end
-	movs = movs{1};
-
-		% q-narrow movements
-	for mi = [1:numel( movs )]
-		ti = linspace( movs(mi).onset, movs(mi).offset, sub ); % subsampling
-		vel = sqrt( sigs(1).data{2, ti}.^2+sigs(2).data{2, ti}.^2+sigs(3).data{2, ti}.^2 );
-
-		[pvel, pk] = max( vel ); % peak velocity
-		movs(mi).peak = ti(pk);
-
-		movs(mi).q = q; % q-delimiters
-		movs(mi).qonset = ti(find( vel >= q*(pvel-vel(1))+vel(1), 1, 'first' ));
-		movs(mi).qoffset = ti(find( vel >= q*(pvel-vel(end))+vel(end), 1, 'last' ));
-	end
-
-		% write movements
 	dstfn = strcat( ftr.dstbase, '.mat' );
 
-	for si = 1:nax
-		dst = fullfile( ftr.dstdir, dstfcol{si}, dstfn );
+	for fi = 1:numel( srcfcol )
+		src = fullfile( ftr.srcdir, srcfcol{fi}, srcfn ); % read signal
+		[sig, movs] = io.readparts( src, {'sig', 'movs'} );
+
+		if numel( movs ) == 0
+			continue;
+		end
+
+		for mi = [1:numel( movs )] % q-narrow delimiters
+			qczc = sig.polyroot( 2, -q*sig.data{2, movs(mi).peak}, [movs(mi).onset, movs(mi).offset] ); % candidate delimiters
+			qczc(qczc < movs(mi).onset | qczc > movs(mi).offset) = [];
+
+			qon = min( qczc(qczc < movs(mi).peak) ); % widest delimiters
+			qoff = max( qczc(qczc > movs(mi).peak) );
+
+			if ~isempty( qon ) && ~isempty( qoff ) % update movements
+				movs(mi).q = q;
+				movs(mi).qonset = qon;
+				movs(mi).qoffset = qoff;
+			else
+				movs(mi).q = 0;
+				movs(mi).qonset = movs(mi).onset;
+				movs(mi).qoffset = movs(mi).offset;
+			end
+		end
+
+		dst = fullfile( ftr.dstdir, dstfcol{fi}, dstfn ); % write movements
 		io.writeparts( dst, {'movs'}, movs );
 	end
 

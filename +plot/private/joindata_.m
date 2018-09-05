@@ -41,7 +41,8 @@ function jdata = joindata_( j0data, data, x, y, opts )
 		% join data
 	shape = size( data );
 	ndaxes = size( j0data.vals, 1 );
-	[~, fjoint, fover] = parseopts_( opts );
+
+	[fjoint, fover] = parseopts2_( opts, 'fjoint', 'fover' );
 
 	if ~any( fjoint ) && ~any( fover ) % singular cell
 		jdata = join_( j0data, data{x, y} );

@@ -1,7 +1,7 @@
-function [fsplit, fjoint, fover, joint, scale, legend, split, feven] = parseopts_( opts )
+function [fsplit, fjoint, fover, joint, scale, legend, split, feven, labpos] = parseopts_( opts )
 % parse options
 %
-% [fsplit, fjoint, joint, scale, legend, split, feven] = PARSEOPTS_( opts )
+% [fsplit, fjoint, joint, scale, legend, split, feven, labpos] = PARSEOPTS_( opts )
 %
 % INPUT
 % opts : panel options (cell string)
@@ -15,6 +15,7 @@ function [fsplit, fjoint, fover, joint, scale, legend, split, feven] = parseopts
 % legend : legend description (cell string)
 % split : split scale description (cell string)
 % feven : even axes flag (scalar logical)
+% labpos : label position [tl, tr, bl, br] (char)
 %
 % TODO: remove conflicting options!
 
@@ -31,59 +32,77 @@ function [fsplit, fjoint, fover, joint, scale, legend, split, feven] = parseopts
 	legend = {};
 	split = {};
 	feven = ismember( 'even', opts );
+	labpos = 'tl';
 
 	for oi = 1:numel( opts )
 		oj = strfind( opts{oi}, 'hjoint' );
 		if oj == 1
 			joint{1}{end+1} = opts{oi}(end);
+			continue;
 		end
 		oj = strfind( opts{oi}, 'vjoint' );
 		if oj == 1
 			joint{2}{end+1} = opts{oi}(end);
+			continue;
 		end
 
 		oj = strfind( opts{oi}, 'habs' ); % absolute scale
 		if oj == 1
 			scale{1}{end+1} = opts{oi}(end-3:end);
+			continue;
 		end
 		oj = strfind( opts{oi}, 'vabs' );
 		if oj == 1
 			scale{2}{end+1} = opts{oi}(end-3:end);
+			continue;
 		end
 		oj = strfind( opts{oi}, 'sabs' );
 		if oj == 1
 			split{end+1} = opts{oi}(end-3:end);
+			continue;
 		end
 
 		oj = strfind( opts{oi}, 'hrel' ); % relative scale
 		if oj == 1
 			scale{1}{end+1} = opts{oi}(end-3:end);
+			continue;
 		end
 		oj = strfind( opts{oi}, 'vrel' );
 		if oj == 1
 			scale{2}{end+1} = opts{oi}(end-3:end);
+			continue;
 		end
 		oj = strfind( opts{oi}, 'srel' );
 		if oj == 1
 			split{end+1} = opts{oi}(end-3:end);
+			continue;
 		end
 
 		oj = strfind( opts{oi}, 'heven' ); % even scale
 		if oj == 1
 			scale{1}{end+1} = opts{oi}(2:end);
+			continue;
 		end
 		oj = strfind( opts{oi}, 'veven' );
 		if oj == 1
 			scale{2}{end+1} = opts{oi}(2:end);
+			continue;
 		end
 		oj = strfind( opts{oi}, 'seven' );
 		if oj == 1
 			split{end+1} = opts{oi}(2:end);
+			continue;
 		end
 
 		oj = strfind( opts{oi}, 'legend' );
 		if oj == 1
 			legend{end+1} = opts{oi}(end);
+			continue;
+		end
+
+		if ismember( opts{oi}, {'tl', 'tr', 'bl', 'br'} ) % label position
+			labpos = opts{oi};
+			continue;
 		end
 	end
 

@@ -1,7 +1,7 @@
-function [data, axd, props] = data_kinematics( ftr, dimfun, data, formargs, sub, svar )
-% kinematic variables
+function [data, axd, props] = data_pvelamp( ftr, dimfun, data, formargs, sub )
+% peak velocity-amplitude relation
 %
-% [data, axd, props] = DATA_KINEMATICS_( ftr, dimfun, data, formargs, sub, svar )
+% [data, axd, props] = DATA_PVELAMP( ftr, dimfun, data, formargs, sub )
 %
 % INPUT
 % ftr : file transfer structure (scalar struct)
@@ -9,7 +9,6 @@ function [data, axd, props] = data_kinematics( ftr, dimfun, data, formargs, sub,
 % data : raw data (cell struct)
 % formargs : data form arguments (cell)
 % sub : subsampling (numeric scalar)
-% svar : kinematic variable [dur, amp, pvel, rttp] (char)
 %
 % OUTPUT
 % data : derived data (cell struct)
@@ -37,17 +36,13 @@ function [data, axd, props] = data_kinematics( ftr, dimfun, data, formargs, sub,
 		error( 'invalid argument: sub' );
 	end
 
-	if nargin < 6 || ~ischar( svar )
-		error( 'invalid argument: svar' );
-	end
-
 	logger = hLogger.instance();
 
 		% set axes
-	[axd, props] = axes_( svar );
+	[axd, props] = axes_();
 
 		% proceed data
-	logger.progress( 'determine kinematic variable (%s)...', svar );
+	logger.progress( 'determine peak velocity-amplitude relation...' );
 
 	for di = 1:numel( data )
 		if isempty( data{di} )
@@ -60,7 +55,8 @@ function [data, axd, props] = data_kinematics( ftr, dimfun, data, formargs, sub,
 		nbundles = numel( data{di}.sigs )/naxes;
 
 		fpos = false( [1, 0] );
-		var = NaN( [1, 0] );
+		pvel = NaN( [1, 0] );
+		amp = NaN( [1, 0] );
 
 		for bi = [1:nbundles]
 
@@ -83,26 +79,14 @@ function [data, axd, props] = data_kinematics( ftr, dimfun, data, formargs, sub,
 
 				% accumulate data
 			fpos = [fpos, [movs.fpos]];
-
-			switch svar
-				case 'dur'
-					var = [var, ref.kin_dur( sigs(1), movs, true )];
-				case 'amp'
-					var = [var, ref.kin_amp( sigs, movs, true, sub )];
-				case 'pvel'
-					var = [var, ref.kin_pvel( sigs, movs, true, sub )];
-				case 'rttp'
-					var = [var, ref.kin_rttp( sigs, movs, true, sub )];
-
-				otherwise
-					error( 'invalid value: svar' );
-			end
+			pvel = [pvel, ref.kin_pvel( sigs, movs, true, sub )];
+			amp = [amp, ref.kin_amp( sigs, movs, true, sub )];
 
 		end
 
 			% store derived data
 		data{di}.fpos = fpos;
-		data{di}.vals = var;
+		data{di}.vals = [amp; pvel];
 		data{di}.form = ref.form( data{di}.fcol, data{di}.fc, data{di}.fpos, formargs );
 
 		logger.progress( di, numel( data ) );
@@ -111,47 +95,20 @@ function [data, axd, props] = data_kinematics( ftr, dimfun, data, formargs, sub,
 end % function
 
 	% local functions
-function [axd, props] = axes_( svar )
+function [axd, props] = axes_()
 	% TODO: hard-coded units!
-	switch svar
-		case 'dur'
-			axd(1).label = {'Movement duration in s'};
-			axd(1).ticks = [];
-			axd(1).ticklabels = {};
-			axd(1).limits = [0, Inf];
-			axd(1).flimits = true;
+	axd(1).label = {'Movement length in mm'};
+	axd(1).ticks = [];
+	axd(1).ticklabels = {};
+	axd(1).limits = [0, Inf];
+	axd(1).flimits = true;
 
-			props = {};
+	axd(2).label = {'Peak velocity in mm/s'};
+	axd(2).ticks = [];
+	axd(2).ticklabels = {};
+	axd(2).limits = [0, Inf];
+	axd(2).flimits = true;
 
-		case 'amp'
-			axd(1).label = {'Movement amplitude in mm'};
-			axd(1).ticks = [];
-			axd(1).ticklabels = {};
-			axd(1).limits = [0, Inf];
-			axd(1).flimits = true;
-
-			props = {};
-
-		case 'pvel'
-			axd(1).label = {'Peak velocity in mm/s'};
-			axd(1).ticks = [];
-			axd(1).ticklabels = {};
-			axd(1).limits = [0, Inf];
-			axd(1).flimits = true;
-
-			props = {};
-
-		case 'rttp'
-			axd(1).label = {'Relative time to peak'};
-			axd(1).ticks = [];
-			axd(1).ticklabels = {};
-			axd(1).limits = [0, 1];
-			axd(1).flimits = true;
-
-			props = {};
-
-		otherwise
-			error( 'invalif value: svar' );
-	end
+	props = {};
 end
 

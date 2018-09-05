@@ -90,7 +90,7 @@ function setlimits_( hax, hbx, datapos, dataneg, axd, opts )
 	end
 
 		% apply split axes scaling, TODO: even scale!
-	[~, ~, ~, ~, ~, ~, split] = parseopts_( opts );
+	split = parseopts2_( opts, 'split' );
 
 	for dx = 1:shape(1)
 		for dy = 1:shape(2)
@@ -134,7 +134,7 @@ function setlimits_( hax, hbx, datapos, dataneg, axd, opts )
 	end
 
 		% apply panel axes scaling
-	[~, ~, ~, ~, scale] = parseopts_( opts );
+	scale = parseopts2_( opts, 'scale' );
 
 	for dy = 1:shape(2) % horizontal
 		if any( ismember( {'absx', 'absy', 'absz'}, scale{1} ) ) % absolute scale
@@ -279,6 +279,26 @@ function setlimits_( hax, hbx, datapos, dataneg, axd, opts )
 			end
 
 			axd(ai).limits = exp( axd(ai).limits );
+		end
+	end
+
+		% use global user limits
+	global PANEL_XLIM PANEL_YLIM PANEL_ZLIM
+
+	for dx = [1:shape(1)]
+		for dy = [1:shape(2)]
+			if isnumeric( PANEL_XLIM ) && numel( PANEL_XLIM ) == 2
+				axlims(dx, dy, 1, :) = PANEL_XLIM;
+				bxlims(dx, dy, 1, :) = PANEL_XLIM;
+			end
+			if isnumeric( PANEL_YLIM ) && numel( PANEL_YLIM ) == 2
+				axlims(dx, dy, 2, :) = PANEL_YLIM;
+				bxlims(dx, dy, 2, :) = PANEL_YLIM;
+			end
+			if isnumeric( PANEL_ZLIM ) && numel( PANEL_ZLIM ) == 2
+				axlims(dx, dy, 3, :) = PANEL_ZLIM;
+				bxlims(dx, dy, 3, :) = PANEL_ZLIM;
+			end
 		end
 	end
 

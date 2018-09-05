@@ -18,7 +18,9 @@ logger = hLogger.instance( fullfile( 'aux/', strcat( util.module(), '.log' ) ) )
 logger.tab( '%s...', util.module() );
 
 style = hStyle.instance();
-style.layout( 'screen', get( 0, 'ScreenPixelsPerInch' ), '755px', '14pt' );
+style.fmenu = false;
+style.ffull = true;
+style.layout( 'screen', 72, '755px', '14pt' );
 style.geometry( [1, 1], [1, 1], 1.0, [NaN, NaN, NaN, NaN] );
 
 	% prepare dataset
@@ -73,7 +75,7 @@ if true
 end
 
 	% -----------------------------------------------------------------------
-	% determine reference frame
+	% determine reference frame (biteplate only)
 fcbp = io.fixfcomp( io.filtfcomp( fcbp_, filtema_{:} ), fcfull );
 ftrbp = io.genftr( fcbp, procdir_, 'pre' );
 fexpbp = ~io.expfcomp( fcbp, trialdims_ );
@@ -90,7 +92,13 @@ if true && ismember( 'bplate', fc.targets )
 	global NVIS_ZSCORE;
 	NVIS_ZSCORE = true;
 
-	io.mapftr( ftr, fexp, @nvis.nvis, 'editroi', filtaudio_{1}, filtaudio_{2}, [1], [false, false, false], @title_inspect_, fullfile( 'aux/', strcat( util.module(), '.cfg' ) ) );
+	while true
+		io.mapftr( ftr, fexp, @nvis.nvis, 'editroi', filtaudio_{1}, filtaudio_{2}, [1], [false, false, false], @title_inspect_, fullfile( 'aux/', strcat( util.module(), '.cfg' ) ) );
+
+		if strcmp( 'no', questdlg( 'reiterate this task?', util.module(), 'yes', 'no', 'yes' ) )
+			break;
+		end
+	end
 
 		% determine frame
 	io.mapftr( ftrbp, fexpbp, @proc.frameget, sensref_, sensbplate_, senssag_ );

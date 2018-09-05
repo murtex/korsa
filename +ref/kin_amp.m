@@ -1,7 +1,7 @@
-function len = movs_len( sigs, movs, fq, sub )
-% movement path lengths
+function amp = kin_amp( sigs, movs, fq, sub )
+% kinematics: movement amplitude
 %
-% len = MOVS_LEN( sigs, movs, fq, sub )
+% amp = KIN_AMP( sigs, movs, fq, sub )
 %
 % INPUT
 % sigs : signals (object)
@@ -10,7 +10,7 @@ function len = movs_len( sigs, movs, fq, sub )
 % sub : movement subsampling (numeric scalar)
 %
 % OUTPUT
-% len : path lengths (numeric)
+% amp : amplitudes (numeric)
 
 		% safeguard
 	if nargin < 1 || ~all( arrayfun( @( s ) isa( s, 'hNSignal' ), sigs ) )
@@ -29,8 +29,8 @@ function len = movs_len( sigs, movs, fq, sub )
 		error( 'invalid argument: sub' );
 	end
 
-		% compute path lengths
-	len = NaN( [1, numel( movs )] );
+		% compute amplitudes
+	amp = NaN( [1, numel( movs )] );
 
 	for mi = 1:numel( movs )
 		if fq
@@ -40,7 +40,7 @@ function len = movs_len( sigs, movs, fq, sub )
 		end
 
 		r = transpose( reshape( cell2mat( arrayfun( @( s ) s.data{1, ti}, sigs, 'UniformOutput', false ) ), [numel( ti ), numel( sigs )] ) );
-		len(mi) = sum( sqrt( sum( diff( r, 1, 2 ).^2, 1 ) ) );
+		amp(mi) = sum( sqrt( sum( diff( r, 1, 2 ).^2, 1 ) ) );
 	end
 
 end % function

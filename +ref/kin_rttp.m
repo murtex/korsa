@@ -1,7 +1,7 @@
-function rttp = movs_rttp( sigs, movs, fq, sub )
-% releative times to peak
+function rttp = kin_rttp( sigs, movs, fq, sub )
+% kinematics: releative times to peak
 %
-% rttp = MOVS_RTTP( sigs, movs, fq, sub )
+% rttp = KIN_RTTP( sigs, movs, fq, sub )
 %
 % INPUT
 % sigs : signals (object)
@@ -32,8 +32,8 @@ function rttp = movs_rttp( sigs, movs, fq, sub )
 	end
 
 		% compute relative times
-	vel = ref.movs_vel( sigs, movs, fq, sub );
-	[~, pvel] = max( ref.movs_vel( sigs, movs, fq, sub ), [], 1 );
+	vel = ref.kin_vel( sigs, movs, fq, sub );
+	[~, pvel] = max( ref.kin_vel( sigs, movs, fq, sub ), [], 1 );
 	rttp = (pvel-1)/(sub-1);
 
 end % function
